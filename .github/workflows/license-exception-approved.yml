@@ -118,6 +118,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: true
           branch: license-exception-${{ github.event.issue.number }}
           title: "Record license exception decision (${{ steps.parse.outputs.status }}) for ${{ steps.parse.outputs.project }} (#${{ github.event.issue.number }})"
           body: |
