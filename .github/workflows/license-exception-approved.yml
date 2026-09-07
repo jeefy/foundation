@@ -45,11 +45,22 @@ jobs:
             const tableMatch = body.match(/\|[^\n]*Component[^\n]*\|[\s\S]*?\n\|[-|\s]+\|\n([\s\S]*?)(?=\n\n|\n###|$)/);
             const newExceptions = [];
             
+            // Unwrap a markdown link "[text](url)" or "<url>" to the bare URL.
+            const toUrl = (cell) => {
+              if (!cell) return undefined;
+              const md = cell.match(/\[[^\]]*\]\((\S+?)\)/);
+              if (md) return md[1];
+              const angle = cell.match(/^<(\S+)>$/);
+              return angle ? angle[1] : cell;
+            };
+            
             if (tableMatch) {
               const rows = tableMatch[1].trim().split('\n');
               let idx = 1;
               for (const row of rows) {
-                const cells = row.split('|').map(c => c.trim()).filter(c => c);
+                // Keep empty cells so column positions stay stable; strip only the
+                // leading/trailing pipe delimiters.
+                const cells = row.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
                 if (cells.length >= 4 && cells[0]) {
                   // Try to extract scope from table (column 5 if present) or use default
                   const scope = (cells.length >= 5 && cells[4]) ? cells[4] : defaultScope;
@@ -57,14 +68,14 @@ jobs:
                   newExceptions.push({
                     id: `exc-${today}-${String(idx).padStart(3, '0')}`,
                     package: cells[0],
-                    packageUrl: cells[1] || undefined,
+                    packageUrl: toUrl(cells[1]),
                     license: cells[3],
                     project: project,
                     approvedDate: today,
                     issueUrl: `https://github.com/${context.repo.owner}/${context.repo.repo}/issues/${issueNumber}`,
                     status: status,
                     scope: scope,
-                    comment: cells.length >= 6 ? cells[5] : undefined
+                    comment: (cells.length >= 6 && cells[5]) ? cells[5] : undefined
                   });
                   idx++;
                 }
@@ -107,6 +118,8 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          signoff: true
+          assignees: joannalee333
           branch: license-exception-${{ github.event.issue.number }}
           title: "Record license exception decision (${{ steps.parse.outputs.status }}) for ${{ steps.parse.outputs.project }} (#${{ github.event.issue.number }})"
           body: |

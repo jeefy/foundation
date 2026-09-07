@@ -8,3 +8,6 @@ playwright/.cache/
 
 # OS files
 .DS_Store
+
+# Local copy created by pretest / npm run serve; canonical file is ../exceptions.json
+site/exceptions.json

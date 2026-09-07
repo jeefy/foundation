@@ -25,6 +25,18 @@ The web interface allows you to:
 
 > **Note:** The CSV and SPDX files are auto-generated from `exceptions.json`. Edit only the JSON file.
 
+### Consuming the Data
+
+Programmatic consumers should fetch from the published site, which is rebuilt from `exceptions.json` on every merge to `main`:
+
+| Format | URL |
+|--------|-----|
+| JSON | <https://exceptions.cncf.io/exceptions.json> |
+| CSV | <https://exceptions.cncf.io/CNCF-licensing-exceptions.csv> |
+| SPDX | <https://exceptions.cncf.io/cncf-exceptions-current.spdx> |
+
+Do not link to `raw.githubusercontent.com` paths under `site/`; those are build artifacts and are not kept current.
+
 ## Blanket Exceptions
 
 Blanket exceptions apply to **all CNCF projects** and are tracked in the main exceptions database with `project: "All CNCF Projects"`.
