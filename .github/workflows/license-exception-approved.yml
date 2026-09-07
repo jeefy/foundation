@@ -119,6 +119,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           signoff: true
+          assignees: joannalee333
           branch: license-exception-${{ github.event.issue.number }}
           title: "Record license exception decision (${{ steps.parse.outputs.status }}) for ${{ steps.parse.outputs.project }} (#${{ github.event.issue.number }})"
           body: |
